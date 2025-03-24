@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:week_3_blabla_project/provider/async_value.dart';
 import 'package:week_3_blabla_project/provider/ride_pref_provider.dart';
 
 import '../../../model/ride/ride_pref.dart';
@@ -32,84 +31,67 @@ class RidePrefScreen extends StatelessWidget {
         .push(AnimationUtils.createBottomToTopRoute(RidesScreen()));
   }
 
-  void loader(BuildContext context) =>
-      context.read<RidePrefProvider>().fetchRidePreferences();
-
   @override
   Widget build(BuildContext context) {
-    return Consumer<RidePrefProvider>(
-      builder: (context, ridePref, child) {
-        final pastPref = ridePref.pastPreferences;
-
-        switch (pastPref.state) {
-          case AsyncValueState.loading:
-            return Center(child: CircularProgressIndicator.adaptive());
-
-          case AsyncValueState.error:
-            return Center(
-              child: Text('Error no internet'),
-            );
-
-          case AsyncValueState.success:
-            return Stack(
-              children: [
-                BlaBackground(),
-                SafeArea(
-                  child: Column(
-                    children: [
-                      SizedBox(height: BlaSpacings.m),
-                      Text(
-                        "Your pick of rides at low price",
-                        style:
-                            BlaTextStyles.heading.copyWith(color: Colors.white),
-                      ),
-                      SizedBox(height: 100),
-                      Container(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: BlaSpacings.xxl),
-                        decoration: BoxDecoration(
-                          color: Colors.white, // White background
-                          borderRadius:
-                              BorderRadius.circular(16), // Rounded corners
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            // 2.1 Display the Form to input the ride preferences
-                            RidePrefForm(
-                                initialPreference: ridePref.currentPreference,
-                                onSubmit: (preference) =>
-                                    onRidePrefSelected(preference, context)),
-                            SizedBox(height: BlaSpacings.m),
-                              
-                            // 2.2 Optionally display a list of past preferences
-                            SizedBox(
-                              height: 200, // Set a fixed height
-                              child: ListView.builder(
-                                shrinkWrap: true, // Fix ListView height issue
-                                physics: AlwaysScrollableScrollPhysics(),
-                                itemCount: pastPref.data!.length,
-                                itemBuilder: (ctx, index) =>
-                                    RidePrefHistoryTile(
-                                  ridePref: pastPref.data![index],
-                                  onPressed: () => onRidePrefSelected(
-                                      pastPref.data![index], context),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+    return Stack(
+      children: [
+        // 1 - Background  Image
+        BlaBackground(),
+    
+        // 2 - Foreground content
+        SafeArea(
+          child: Consumer<RidePrefProvider>(
+            builder: (context, ridePref, child) {
+              List<RidePreference> pastPreferences =
+                  ridePref.preferencesHistory();
+              return Column(
+                children: [
+                  SizedBox(height: BlaSpacings.m),
+                  Text(
+                    "Your pick of rides at low price",
+                    style: BlaTextStyles.heading.copyWith(color: Colors.white),
                   ),
-                ),
-              ],
-            );
-          default:
-            return CircularProgressIndicator.adaptive();
-        }
-      },
+                  SizedBox(height: 100),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: BlaSpacings.xxl),
+                    decoration: BoxDecoration(
+                      color: Colors.white, // White background
+                      borderRadius: BorderRadius.circular(16), // Rounded corners
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // 2.1 Display the Form to input the ride preferences
+                        RidePrefForm(
+                            initialPreference: ridePref.currentPreference,
+                            onSubmit: (preference) =>
+                                onRidePrefSelected(preference, context)),
+                        SizedBox(height: BlaSpacings.m),
+              
+                        // 2.2 Optionally display a list of past preferences
+                        SizedBox(
+                          height: 200, // Set a fixed height
+                          child: ListView.builder(
+                            shrinkWrap: true, // Fix ListView height issue
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: pastPreferences.length,
+                            itemBuilder: (ctx, index) => RidePrefHistoryTile(
+                              ridePref: pastPreferences[index],
+                              onPressed: () => onRidePrefSelected(
+                                  pastPreferences[index], context),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
