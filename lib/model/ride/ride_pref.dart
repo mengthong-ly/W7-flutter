@@ -15,7 +15,9 @@ class RidePreference {
 
   @override
   bool operator ==(Object other) {
+    // identical use to check if the objects are from the same memory location jg hah
     if (identical(this, other)) return true;
+    // is  is use to check if the object are the same type 
     return other is RidePreference &&
         departure == other.departure &&
         departureDate == other.departureDate &&
