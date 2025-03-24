@@ -13,7 +13,7 @@ import 'ui/theme/theme.dart';
 
 void main() {
   // 1 - Initialize the services
-  RidePrefService.initialize(MockRidePreferencesRepository());
+  // RidePrefService.initialize(MockRidePreferencesRepository());
   LocationsService.initialize(MockLocationsRepository());
   RidesService.initialize(MockRidesRepository());
 
