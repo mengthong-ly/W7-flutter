@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:logger/web.dart';
 import 'package:week_3_blabla_project/model/ride/ride_pref.dart';
-import 'package:week_3_blabla_project/provider/async_value.dart';
-import 'package:week_3_blabla_project/repository/mock/mock_ride_preferences_repository.dart';
+import 'package:week_3_blabla_project/ui/provider/async_value.dart';
+import 'package:week_3_blabla_project/data/repository/mock/mock_ride_preferences_repository.dart';
 
 class RidePrefProvider extends ChangeNotifier {
   RidePrefProvider() {
