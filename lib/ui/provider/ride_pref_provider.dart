@@ -1,53 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:logger/web.dart';
+import 'package:week_3_blabla_project/data/repository/mock/local_storage/local_ride_preference_repository.dart';
+import 'package:week_3_blabla_project/data/repository/ride_preferences_repository.dart';
 import 'package:week_3_blabla_project/model/ride/ride_pref.dart';
 import 'package:week_3_blabla_project/ui/provider/async_value.dart';
-import 'package:week_3_blabla_project/data/repository/mock/mock_ride_preferences_repository.dart';
 
 class RidePrefProvider extends ChangeNotifier {
   RidePrefProvider() {
     fetchRidePreferences();
   }
-  MockRidePreferencesRepository ridePreferencesRepository =
-      MockRidePreferencesRepository();
+  RidePreferencesRepository ridePreferencesRepository =
+      LocalRidePreferenceRepository();
   // current pref is here
   RidePreference? _currentPreference;
   RidePreference? get currentPreference => _currentPreference;
 
   // past pref is here
-  // final List<RidePreference> _pastPreference = [];
   late AsyncValue<List<RidePreference>> pastPreferences;
-
-  // return the list of past pref
-  // Future<List<RidePreference>> preferencesHistory() async {
-  //   await fetchRidePreferences();
-  //   return pastPreferences.data!.reversed.toList();
-  // }
 
   void setCurrentPreference(RidePreference ridePreference) async {
     if (_currentPreference == ridePreference) {
     } else {
       _currentPreference = ridePreference;
     }
-    _insertRecentRidePrefToHistory(ridePreference)
-        ? Logger().d('Past Preference add successfully')
-        : Logger().d('Past Preference already exists');
+    await ridePreferencesRepository.addPreference(_currentPreference!);
+    fetchRidePreferences();
     notifyListeners();
   }
 
-  bool _insertRecentRidePrefToHistory(RidePreference ridePref) {
-    if (pastPreferences.data!.contains(ridePref)) {
-      pastPreferences.data!.removeWhere((pastPref) => ridePref == pastPref);
-      // pastPreferences.data!.add(ridePref);
-      pastPreferences.data!.insert(0, ridePref);
-      Logger().d('re index successfully');
-      return false;
-    } else {
-      pastPreferences.data!.insert(0, ridePref);
-      Logger().d('ride pref added');
-      return true;
-    }
-  }
+  // Future<bool> _insertRecentRidePrefToHistory(RidePreference ridePref) async {
+
+  //   // if (pastPreferences.data!.contains(ridePref)) {
+  //   //   pastPreferences.data!.removeWhere((pastPref) => ridePref == pastPref);
+  //   //   pastPreferences.data!.insert(0, ridePref);
+  //   //   // await ridePreferencesRepository.addPreference(ridePref);
+  //   //   Logger().d('re index successfully');
+  //   //   return false;
+  //   // } else {
+  //   //   pastPreferences.data!.insert(0, ridePref);
+  //   //   await ridePreferencesRepository.addPreference(ridePref);
+  //   //   Logger().d('ride pref added');
+  //   //   return true;
+  //   // }
+  // }
 
   void fetchRidePreferences() async {
     pastPreferences = AsyncValue.loading();
