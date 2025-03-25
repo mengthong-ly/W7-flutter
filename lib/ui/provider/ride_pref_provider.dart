@@ -28,35 +28,19 @@ class RidePrefProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<bool> _insertRecentRidePrefToHistory(RidePreference ridePref) async {
-
-  //   // if (pastPreferences.data!.contains(ridePref)) {
-  //   //   pastPreferences.data!.removeWhere((pastPref) => ridePref == pastPref);
-  //   //   pastPreferences.data!.insert(0, ridePref);
-  //   //   // await ridePreferencesRepository.addPreference(ridePref);
-  //   //   Logger().d('re index successfully');
-  //   //   return false;
-  //   // } else {
-  //   //   pastPreferences.data!.insert(0, ridePref);
-  //   //   await ridePreferencesRepository.addPreference(ridePref);
-  //   //   Logger().d('ride pref added');
-  //   //   return true;
-  //   // }
-  // }
-
   void fetchRidePreferences() async {
     pastPreferences = AsyncValue.loading();
     notifyListeners();
     try {
-// 2 Fetch data
+    // 2 Fetch data
       List<RidePreference> pastPrefs =
           await ridePreferencesRepository.getPastPreferences();
-// 3 Handle success
+    // 3 Handle success
       pastPreferences = AsyncValue.success(pastPrefs.reversed.toList());
       Logger().d('Past preferences fetched successfully');
-      Logger().d(pastPrefs.reversed.toList());
-      Logger().d(pastPrefs);
-// 4 Handle error
+      // Logger().d(pastPrefs.reversed.toList());
+      // Logger().d(pastPrefs);
+    // 4 Handle error
     } catch (error) {
       pastPreferences = AsyncValue.error(error);
     }
